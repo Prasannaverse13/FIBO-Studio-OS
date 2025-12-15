@@ -145,6 +145,11 @@ function App() {
     setPrompt("");
   };
 
+  const handleLogout = () => {
+    handleReset();
+    setShowLanding(true);
+  };
+
   const handleJsonUpdate = (newData: FiboScene) => {
       // Allow users to edit the JSON manually. 
       // We update the fiboScenes array at the current index.
@@ -381,6 +386,17 @@ function App() {
             ) : (
                 <LibraryPanel onLoadBlueprint={handleLoadBlueprint} />
             )}
+        </div>
+
+        {/* Sidebar Footer - Logout */}
+        <div className="p-4 border-t border-zinc-800 bg-[#0c0c0e]">
+            <button 
+                onClick={handleLogout}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium text-zinc-400 bg-zinc-900 border border-zinc-800 rounded-md hover:bg-zinc-800 hover:text-white transition-colors group"
+            >
+                <svg className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
+                Exit Session
+            </button>
         </div>
       </aside>
 

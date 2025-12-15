@@ -4,12 +4,16 @@ import { WorkflowPreset, LibraryBlueprint } from './types';
 const FALLBACK_BRIA_KEY = "bf50316c2ef443498852ca998ad1ab24";
 const FALLBACK_MCP_KEY = "32caf2a9ea05406fac6b1228f48159da";
 
-// Helper to safely get env var without crashing if process is undefined
+// Helper to safely get env var from Window (Runtime) or Process (Build time)
 const getEnv = (key: string, fallback: string): string => {
   try {
-    // Check if process.env exists and has the key
+    // 1. Check Runtime Injection (Cloud Run / Server Injection)
+    if (typeof window !== 'undefined' && (window as any).__ENV__ && (window as any).__ENV__[key]) {
+      return (window as any).__ENV__[key];
+    }
+    
+    // 2. Check Build Time Injection (Vite)
     if (typeof process !== 'undefined' && process.env && process.env[key]) {
-      // Remove quotes if they were accidentally included in the string
       return process.env[key]?.replace(/['"]/g, '') || fallback;
     }
   } catch (e) {

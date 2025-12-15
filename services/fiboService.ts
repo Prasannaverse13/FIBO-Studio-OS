@@ -12,7 +12,7 @@ const BRIA_V2_PROD_ENDPOINT = "https://engine.prod.bria-api.com/v2/image/generat
 const BRIA_MCP_ENDPOINT = "https://mcp.prod.bria-api.com/mcp";
 
 // Configuration
-const API_TIMEOUT_MS = 120000; // 2 minutes max for polling
+const API_TIMEOUT_MS = 60000; // Reduced to 60s for faster fail-fast behavior
 
 /**
  * Robust fetch with timeout wrapper
@@ -56,8 +56,8 @@ const pollStatusUntilCompleted = async (statusUrl: string, apiKey: string): Prom
         throw new Error(data.error || "Generation failed during processing");
       }
       
-      // Wait 2 seconds before next poll
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Wait 800ms before next poll (Optimized for speed)
+      await new Promise(resolve => setTimeout(resolve, 800));
       
     } catch (e) {
       console.warn("Polling glitch:", e);
@@ -101,11 +101,11 @@ const generateViaRestV2 = async (fiboJson: FiboScene, seed: number): Promise<Fib
     }
 
     // 2. Build Payload matching Python 'RefineImageNodeV2' usage of v2/image/generate
-    // We send BOTH prompt and structured_prompt.
+    // FIXED: structured_prompt must be a STRINGIFIED JSON string when passed to the API
     const payload = {
       prompt: fiboJson.short_description, 
       structured_prompt: JSON.stringify(safeJson), 
-      model_version: "FIBO", // Explicitly requested by Python script
+      model_version: "FIBO", 
       aspect_ratio: fiboJson.aspect_ratio || "1:1",
       seed: seed,
       num_results: 1, 
@@ -126,7 +126,16 @@ const generateViaRestV2 = async (fiboJson: FiboScene, seed: number): Promise<Fib
         if (!response.ok) {
             const txt = await response.text();
             console.error("[FIBO Service] API Error Details:", txt);
-            throw new Error(`Bria API Error ${response.status}: ${txt.substring(0, 200)}`);
+            let errorMessage = `Bria API Error ${response.status}: ${txt.substring(0, 200)}`;
+            
+            try {
+               const jsonErr = JSON.parse(txt);
+               if (jsonErr.error && jsonErr.error.details) {
+                   errorMessage += ` Details: ${jsonErr.error.details}`;
+               }
+            } catch (e) {}
+            
+            throw new Error(errorMessage);
         }
 
         const initialData = await response.json();

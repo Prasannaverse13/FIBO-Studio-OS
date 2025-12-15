@@ -265,6 +265,11 @@ function App() {
     setIsRendering(true);
     setIsInterpreting(false);
     
+    if (!scenes || scenes.length === 0) {
+        setIsRendering(false);
+        return;
+    }
+    
     // Initialize slots with null to show loading state immediately
     const placeholders = new Array(scenes.length).fill(null);
     setGeneratedResults(placeholders);
@@ -273,7 +278,7 @@ function App() {
 
     scenes.forEach((scene, index) => {
         // IMPORTANT: Stagger requests to avoid 429 Rate Limits from API providers
-        // We delay each subsequent request by 1.1 seconds. 
+        // Decreased delay to 300ms for faster parallel starts
         setTimeout(() => {
             generateImageFromFibo(scene)
                 .then(result => {
@@ -303,7 +308,7 @@ function App() {
                         setIsRendering(false);
                     }
                 });
-        }, index * 1100); 
+        }, index * 300); 
     });
   };
 

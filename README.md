@@ -15,22 +15,6 @@ Instead of struggling with vague natural language prompts, this application uses
 
 ---
 
-## 🚀 Deployment (Vercel)
-
-1. **Fork/Clone** this repository to your GitHub.
-2. **Import** the project in Vercel.
-3. In the **Environment Variables** section, add the following keys:
-
-| Key | Description |
-| :--- | :--- |
-| `API_KEY` | Your Google Gemini API Key |
-| `BRIA_API_KEY` | Your Bria AI Production API Key |
-| `BRIA_MCP_API_KEY` | Your Bria AI MCP Key |
-
-4. **Deploy**.
-
----
-
 ## 🏗️ Architecture & Workflow
 
 The system operates on a strictly typed Agentic pipeline:

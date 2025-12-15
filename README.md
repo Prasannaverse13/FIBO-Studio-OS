@@ -28,7 +28,7 @@ The system operates on a strictly typed Agentic pipeline:
 ```mermaid
 graph TD
     User[User Input / Text] -->|Natural Language| Interpreter[Gemini Interpreter Agent]
-    Director[Visual Director UI] -->|Constraints (HDR, Lens, Angle)| Interpreter
+    Director[Visual Director UI] -->|Constraints: HDR, Lens, Angle| Interpreter
     
     Interpreter -->|Translates to| JSON[FIBO JSON Blueprint]
     
@@ -99,13 +99,18 @@ We have integrated the Bria ecosystem deeply into the application logic. Here is
     ```
 
 3.  **Environment Configuration**
-    Create a `.env` file in the root:
+    Create a `.env` file in the root directory. **Do not commit this file.**
+    
     ```env
-    # Your Google Gemini API Key
+    # Google Gemini API Key (Required for Agent logic)
     API_KEY=AIzaSy...
     
-    # Note: Bria Keys are currently managed in constants.ts for the hackathon demo, 
-    # but should be moved here for production.
+    # Bria AI API Keys (Required for Generation)
+    BRIA_API_KEY=your_bria_production_key_here
+    BRIA_MCP_API_KEY=your_bria_mcp_key_here
+    
+    # Optional
+    BRIA_STAGING_KEY=...
     ```
 
 4.  **Run the Application**

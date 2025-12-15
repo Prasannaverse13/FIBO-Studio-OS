@@ -1,15 +1,20 @@
 import { WorkflowPreset, LibraryBlueprint } from './types';
 
+// Hardcoded Fallback Keys (Provided by user permission)
+const FALLBACK_BRIA_KEY = "bf50316c2ef443498852ca998ad1ab24";
+const FALLBACK_MCP_KEY = "32caf2a9ea05406fac6b1228f48159da";
+
 // Bria.ai Keys
-export const BRIA_MCP_API_KEY = "32caf2a9ea05406fac6b1228f48159da"; 
-export const BRIA_PRODUCTION_KEY = "bf50316c2ef443498852ca998ad1ab24";
-export const BRIA_STAGING_KEY = "6949a77c8c0649f88ba6c66e1a98f192";
+// We check process.env first. If missing/empty, we use the hardcoded fallback.
+export const BRIA_PRODUCTION_KEY = process.env.BRIA_API_KEY || FALLBACK_BRIA_KEY;
+export const BRIA_MCP_API_KEY = process.env.BRIA_MCP_API_KEY || FALLBACK_MCP_KEY;
+export const BRIA_STAGING_KEY = process.env.BRIA_STAGING_KEY || "";
 export const BRIA_API_KEY = BRIA_PRODUCTION_KEY; 
 
 // Legacy / Other Keys
-export const FIBO_API_KEY_LEGACY = "eea0ac03-4122-40da-89b7-3eb7a5f9535b:a25dcaea3cdfda2de7448783a63e34e9";
-export const COMFY_API_KEY = "eyJ0eXBlIjoiY29tZnkiLCJhcGlLZXkiOiJlOWUyNGUwNjg4NzM0YzVjYWRiZDlmZGY4OWZiMTRmZiJ9";
-export const MCP_API_KEY_LEGACY = "32caf2a9ea05406fac6b1228f48159da";
+export const FIBO_API_KEY_LEGACY = process.env.FIBO_API_KEY_LEGACY || "";
+export const COMFY_API_KEY = process.env.COMFY_API_KEY || "";
+export const MCP_API_KEY_LEGACY = process.env.MCP_API_KEY_LEGACY || "";
 
 export const WORKFLOWS: WorkflowPreset[] = [
   {

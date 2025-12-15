@@ -39,6 +39,10 @@ const fetchWithTimeout = async (url: string, options: RequestInit, timeout: numb
 const generateViaRestV2 = async (fiboJson: FiboScene, seed: number): Promise<FiboGenerationResponse> => {
     console.log("[FIBO Service] Attempting REST V2 (Production)...");
     
+    if (!BRIA_PRODUCTION_KEY) {
+        throw new Error("Missing API Key: BRIA_API_KEY is missing in environment variables.");
+    }
+
     // EXPLICIT CONSTRUCTION: Create a fresh object to guarantee all required keys exist.
     // This solves the "objects -> Field required" 422 error by ensuring undefined values are replaced with defaults.
     const safeJson = {
@@ -115,7 +119,15 @@ const generateViaRestV2 = async (fiboJson: FiboScene, seed: number): Promise<Fib
         throw new Error("API success but no image_url in response.");
 
     } catch (error: any) {
-        console.error(`[FIBO Service] REST V2 Error: ${error.message}`);
+        // If it's a fetch error (like CORS or network), it usually has no response status
+        const errorMsg = error.message || "Unknown Error";
+        console.error(`[FIBO Service] REST V2 Error: ${errorMsg}`);
+        
+        // Enhance error message for user
+        if (errorMsg.includes("Failed to fetch")) {
+             throw new Error("Network/CORS Error: The browser blocked the request or the API is unreachable.");
+        }
+        
         throw error;
     }
 };
@@ -126,6 +138,10 @@ const generateViaRestV2 = async (fiboJson: FiboScene, seed: number): Promise<Fib
 const generateViaMcp = async (fiboJson: FiboScene, seed: number): Promise<FiboGenerationResponse> => {
     console.log("[FIBO Service] Fallback to MCP...");
     
+    if (!BRIA_MCP_API_KEY) {
+        throw new Error("Missing API Key: BRIA_MCP_API_KEY is missing in environment variables.");
+    }
+
     // MCP Payload
     const rpcPayload = {
         jsonrpc: "2.0",

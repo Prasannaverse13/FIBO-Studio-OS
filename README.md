@@ -44,10 +44,28 @@ graph TD
     
     JSON -->|Validated Schema| AppState[React State / Editor]
     
-    AppState -->|Sending Blueprint| BriaAPI[Bria Neural API v2]
+    AppState -->|Async Polling (Comfy Logic)| BriaAPI[Bria Neural API v2]
     
     BriaAPI -->|Generates| Image[High-Fidelity Asset]
 ```
+
+---
+
+## 🧩 ComfyUI Node Integration
+
+This project bridges the gap between web applications and node-based workflows by strictly adhering to the logic defined in **Bria's Official ComfyUI Nodes**.
+
+| ComfyUI Node Reference | TypeScript Implementation | Logic Ported |
+| :--- | :--- | :--- |
+| **`GenerateImageNodeV2`** | `services/fiboService.ts` | Implements the **Async Polling** mechanism (`pollStatusUntilCompleted`) to handle long-running generation tasks without timeouts, mirroring the Python `poll_status_until_completed` utility. |
+| **`RefineImageNodeV2`** | `services/fiboService.ts` | We replicate the generation logic by passing the `structured_prompt` and `model_version: "FIBO"`. **Note:** We use Gemini to architect the JSON blueprint, replacing the internal Bria refinement step with our own Agentic pipeline, then passing that strict JSON to the engine. |
+
+**Code Location:**
+The core integration logic is found in `services/fiboService.ts`. The `generateViaRestV2` function replicates the Python SDK flow:
+1.  **POST** payload with `sync: false` to `/v2/image/generate`.
+2.  Extract `status_url` from the response.
+3.  **Poll** the status URL until the state is `COMPLETED`.
+4.  Retrieve the final `image_url`.
 
 ---
 

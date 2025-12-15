@@ -4,17 +4,30 @@ import { WorkflowPreset, LibraryBlueprint } from './types';
 const FALLBACK_BRIA_KEY = "bf50316c2ef443498852ca998ad1ab24";
 const FALLBACK_MCP_KEY = "32caf2a9ea05406fac6b1228f48159da";
 
+// Helper to safely get env var without crashing if process is undefined
+const getEnv = (key: string, fallback: string): string => {
+  try {
+    // Check if process.env exists and has the key
+    if (typeof process !== 'undefined' && process.env && process.env[key]) {
+      // Remove quotes if they were accidentally included in the string
+      return process.env[key]?.replace(/['"]/g, '') || fallback;
+    }
+  } catch (e) {
+    // Ignore error
+  }
+  return fallback;
+};
+
 // Bria.ai Keys
-// We check process.env first. If missing/empty, we use the hardcoded fallback.
-export const BRIA_PRODUCTION_KEY = process.env.BRIA_API_KEY || FALLBACK_BRIA_KEY;
-export const BRIA_MCP_API_KEY = process.env.BRIA_MCP_API_KEY || FALLBACK_MCP_KEY;
-export const BRIA_STAGING_KEY = process.env.BRIA_STAGING_KEY || "";
+export const BRIA_PRODUCTION_KEY = getEnv('BRIA_API_KEY', FALLBACK_BRIA_KEY);
+export const BRIA_MCP_API_KEY = getEnv('BRIA_MCP_API_KEY', FALLBACK_MCP_KEY);
+export const BRIA_STAGING_KEY = getEnv('BRIA_STAGING_KEY', "");
 export const BRIA_API_KEY = BRIA_PRODUCTION_KEY; 
 
 // Legacy / Other Keys
-export const FIBO_API_KEY_LEGACY = process.env.FIBO_API_KEY_LEGACY || "";
-export const COMFY_API_KEY = process.env.COMFY_API_KEY || "";
-export const MCP_API_KEY_LEGACY = process.env.MCP_API_KEY_LEGACY || "";
+export const FIBO_API_KEY_LEGACY = getEnv('FIBO_API_KEY_LEGACY', "");
+export const COMFY_API_KEY = getEnv('COMFY_API_KEY', "");
+export const MCP_API_KEY_LEGACY = getEnv('MCP_API_KEY_LEGACY', "");
 
 export const WORKFLOWS: WorkflowPreset[] = [
   {

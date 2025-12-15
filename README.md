@@ -44,7 +44,7 @@ graph TD
     
     JSON -->|Validated Schema| AppState[React State / Editor]
     
-    AppState -->|Async Polling (Comfy Logic)| BriaAPI[Bria Neural API v2]
+    AppState -->|Async Polling - Comfy Logic| BriaAPI[Bria Neural API v2]
     
     BriaAPI -->|Generates| Image[High-Fidelity Asset]
 ```
